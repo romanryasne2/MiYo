@@ -12,15 +12,13 @@ namespace MiYo.Models.Database
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
-
-        [Required]
-        public int LocationId { get; set; }
+        
+        public int? LocationId { get; set; }
         public virtual Location Location { get; set; }
 
         [Required]
         public double Rating { get; set; }
-
-        [Required]
+        
         public byte[] Avatar { get; set; }
 
         [ForeignKey("EmployeeId")]
