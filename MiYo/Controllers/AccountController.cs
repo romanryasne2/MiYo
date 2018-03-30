@@ -75,10 +75,13 @@ namespace MiYo.Controllers
 
             // This doesn't count login failures towards account lockout
             // To enable password failures to trigger account lockout, change to shouldLockout: true
-            var result = await SignInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, shouldLockout: false);
+            var user = await UserManager.FindByEmailAsync(model.Email);
+            var result = await SignInManager.PasswordSignInAsync(user?.UserName ?? "", model.Password, model.RememberMe, shouldLockout: false);
             switch (result)
             {
                 case SignInStatus.Success:
+                    if(!user.EmailConfirmed)
+                        return View("DisplayEmail");
                     return RedirectToLocal(returnUrl);
                 case SignInStatus.LockedOut:
                     return View("Lockout");
@@ -89,6 +92,14 @@ namespace MiYo.Controllers
                     ModelState.AddModelError("", "Invalid login attempt.");
                     return View(model);
             }
+        }
+
+        //
+        // GET: /Account/DisplayMail
+        [AllowAnonymous]
+        public ActionResult DisplayMail()
+        {
+            return View();
         }
 
         //
@@ -151,19 +162,34 @@ namespace MiYo.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
+                //get employee role
+                int? roleId = null;
+                using (var db = new ApplicationDbContext())
+                {
+                    roleId = db.UserRoles.Where(role => String.Equals(role.Name, "Employee")).
+                        FirstOrDefault()?.Id;
+                }
+                if (roleId == null) //something failed, redisplay form
+                    return View(model);
+
+                //crearte user
+                var user = new ApplicationUser
+                {
+                    UserName = String.Format("{0} {1}", model.FirstName, model.LastName),
+                    FirstName = model.FirstName,
+                    LastName = model.LastName,
+                    Email = model.Email,
+                    RoleId = (int)roleId,
+                };
                 var result = await UserManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
-                    await SignInManager.SignInAsync(user, isPersistent:false, rememberBrowser:false);
-                    
-                    // For more information on how to enable account confirmation and password reset please visit https://go.microsoft.com/fwlink/?LinkID=320771
-                    // Send an email with this link
-                    // string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
-                    // var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
-                    // await UserManager.SendEmailAsync(user.Id, "Confirm your account", "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>");
+                    //await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
 
-                    return RedirectToAction("Index", "Home");
+                    string callbackUrl = await SendEmailConfirmationTokenAsync(user.Id, "Confirm your account");
+
+                    //return RedirectToAction("Index", "Home");
+                    return View("DisplayEmail");
                 }
                 AddErrors(result);
             }
@@ -181,8 +207,36 @@ namespace MiYo.Controllers
             {
                 return View("Error");
             }
-            var result = await UserManager.ConfirmEmailAsync(userId, code);
-            return View(result.Succeeded ? "ConfirmEmail" : "Error");
+
+            IdentityResult result;
+            try
+            {
+                result = await UserManager.ConfirmEmailAsync(userId, code);
+
+                if (result.Succeeded)
+                {
+                    //when account verificated create Empplee entry for user
+                    var empId = await GetNewEmployeeAsync();
+                    using(var db = new ApplicationDbContext())
+                    {
+                        var user = db.Users.FirstOrDefault(u => u.Id.Equals(userId));
+                        if (user != null)
+                            user.EmployeeId = empId;
+                        db.SaveChanges();
+                    }
+
+                    return View("ConfirmEmail");
+                }
+                AddErrors(result);
+                ViewBag.errorMessage = "ConfirmEmail failed";
+                return View("Error");
+            }
+            catch (InvalidOperationException ioe)
+            {
+                // ConfirmEmailAsync throws when the userId is not found.
+                ViewBag.errorMessage = ioe.Message;
+                return View("Error");
+            }
         }
 
         //
@@ -211,10 +265,10 @@ namespace MiYo.Controllers
 
                 // For more information on how to enable account confirmation and password reset please visit https://go.microsoft.com/fwlink/?LinkID=320771
                 // Send an email with this link
-                // string code = await UserManager.GeneratePasswordResetTokenAsync(user.Id);
-                // var callbackUrl = Url.Action("ResetPassword", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);		
-                // await UserManager.SendEmailAsync(user.Id, "Reset Password", "Please reset your password by clicking <a href=\"" + callbackUrl + "\">here</a>");
-                // return RedirectToAction("ForgotPasswordConfirmation", "Account");
+                string code = await UserManager.GeneratePasswordResetTokenAsync(user.Id);
+                var callbackUrl = Url.Action("ResetPassword", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
+                await UserManager.SendEmailAsync(user.Id, "Reset Password", "Please reset your password by clicking <a href=\"" + callbackUrl + "\">here</a>");
+                return RedirectToAction("ForgotPasswordConfirmation", "Account");
             }
 
             // If we got this far, something failed, redisplay form
@@ -424,6 +478,39 @@ namespace MiYo.Controllers
         }
 
         #region Helpers
+        /// <summary>
+        /// Creates new employee with default values in database.
+        /// </summary>
+        /// <returns>id of new employee</returns>
+        private async Task<int> GetNewEmployeeAsync()
+        {
+            int empId;
+            using(var db = new ApplicationDbContext())
+            {
+                var emp = new Models.Database.Employee
+                {
+                    Avatar = null,
+                    Location = null,
+                    Rating = 0
+                };
+                db.Employees.Add(emp);
+                db.SaveChanges();
+                empId = emp.Id;
+            }
+            return await Task.FromResult(empId);
+        }
+
+        private async Task<string> SendEmailConfirmationTokenAsync(string userID, string subject)
+        {
+            string code = await UserManager.GenerateEmailConfirmationTokenAsync(userID);
+            var callbackUrl = Url.Action("ConfirmEmail", "Account",
+               new { userId = userID, code = code }, protocol: Request.Url.Scheme);
+            await UserManager.SendEmailAsync(userID, subject,
+               "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>");
+
+            return callbackUrl;
+        }
+
         // Used for XSRF protection when adding external logins
         private const string XsrfKey = "XsrfId";
 
