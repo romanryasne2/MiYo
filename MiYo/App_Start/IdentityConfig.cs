@@ -40,6 +40,7 @@ namespace MiYo
                 message.Destination,
                 message.Subject,
                 message.Body);
+            mail.IsBodyHtml = true;
 
             try
             {
@@ -117,7 +118,11 @@ namespace MiYo
             if (dataProtectionProvider != null)
             {
                 manager.UserTokenProvider = 
-                    new DataProtectorTokenProvider<ApplicationUser>(dataProtectionProvider.Create("ASP.NET Identity"));
+                    new DataProtectorTokenProvider<ApplicationUser>
+                        (dataProtectionProvider.Create("ASP.NET Identity"))
+                        {
+                            TokenLifespan = TimeSpan.FromDays(30)
+                        };
             }
             return manager;
         }
