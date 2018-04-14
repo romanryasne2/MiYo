@@ -198,6 +198,7 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\AccountViewModels.cs" />
+    <Compile Include="Models\UserViewModels.cs" />
     <Compile Include="Models\Converters\BinToImageSourceConverter.cs" />
     <Compile Include="Models\DatabaseInitializer.cs" />
     <Compile Include="Models\Database\ApplicationUser.cs" />
@@ -218,6 +219,7 @@
     <Compile Include="Models\Database\Skill.cs" />
     <Compile Include="Models\Database\SkillState.cs" />
     <Compile Include="Models\IdentityModels.cs" />
+    <Compile Include="Models\AdminViewModels.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Models\Validation\RoleValidator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

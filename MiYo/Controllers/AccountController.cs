@@ -196,12 +196,18 @@ namespace MiYo.Controllers
                     Email = model.Email,
                     RoleId = (int)employeeRoleId,
                 };
-                var result = await UserManager.CreateAsync(user, model.Password);
+                //generate password
+                string tempPassword = "";
+
+                var result = await UserManager.CreateAsync(user, tempPassword);
                 if (result.Succeeded)
                 {
                     //await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
 
-                    string callbackUrl = await SendEmailConfirmationTokenAsync(user.Id, "Confirm your account");
+                    string callbackUrl = await SendEmailConfirmationTokenAsync(user.Id, 
+                        "Confirm your account", 
+                        $"After confirmation you can log in with password {tempPassword}.<br/>" +
+                        "Password can be changed in your account`s settings.");
 
                     //return RedirectToAction("Index", "Home");
                     return View("EmployeeRegistered");
@@ -515,13 +521,13 @@ namespace MiYo.Controllers
             return await Task.FromResult(empId);
         }
 
-        private async Task<string> SendEmailConfirmationTokenAsync(string userID, string subject)
+        private async Task<string> SendEmailConfirmationTokenAsync(string userID, string subject, string addition = "")
         {
             string code = await UserManager.GenerateEmailConfirmationTokenAsync(userID);
             var callbackUrl = Url.Action("ConfirmEmail", "Account",
                new { userId = userID, code = code }, protocol: Request.Url.Scheme);
             await UserManager.SendEmailAsync(userID, subject,
-               "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>");
+               "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a><br/>" + addition);
 
             return callbackUrl;
         }
