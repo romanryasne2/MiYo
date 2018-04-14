@@ -15,6 +15,19 @@ namespace MiYo.Controllers
     [Authorize]
     public class AccountController : Controller
     {
+        private MiYo.Models.Validation.RoleValidator roleValidator;
+        public MiYo.Models.Validation.RoleValidator RoleValidator
+        {
+            get
+            {
+                return roleValidator ?? new Models.Validation.RoleValidator();
+            }
+            private set
+            {
+                roleValidator = value;
+            }
+        }
+
         private ApplicationSignInManager _signInManager;
         private ApplicationUserManager _userManager;
 
@@ -80,9 +93,14 @@ namespace MiYo.Controllers
             switch (result)
             {
                 case SignInStatus.Success:
-                    if(!user.EmailConfirmed)
+                    if (!user.EmailConfirmed)
                         return View("DisplayEmail");
-                    return RedirectToLocal(returnUrl);
+                    else if (!string.IsNullOrEmpty(returnUrl))
+                        return RedirectToLocal(returnUrl);
+                    else if (roleValidator.IsAdmin(user.Id))
+                        return RedirectToAction("Index", "Admin", routeValues: new { });
+                    else
+                        return RedirectToAction("Index", "Employee", routeValues: new { });
                 case SignInStatus.LockedOut:
                     return View("Lockout");
                 case SignInStatus.RequiresVerification:
@@ -95,9 +113,9 @@ namespace MiYo.Controllers
         }
 
         //
-        // GET: /Account/DisplayMail
+        // GET: /Account/EmployeeRegistered
         [AllowAnonymous]
-        public ActionResult DisplayMail()
+        public ActionResult EmployeeRegistered()
         {
             return View();
         }
@@ -145,9 +163,10 @@ namespace MiYo.Controllers
             }
         }
 
+        // Registering an employee
+        // Available for admins and super admins only
         //
         // GET: /Account/Register
-        [AllowAnonymous]
         public ActionResult Register()
         {
             return View();
@@ -156,21 +175,17 @@ namespace MiYo.Controllers
         //
         // POST: /Account/Register
         [HttpPost]
-        [AllowAnonymous]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Register(RegisterViewModel model)
         {
             if (ModelState.IsValid)
             {
+                var currentUserId = User.Identity.GetUserId();
+                if (roleValidator.IsAdmin(currentUserId) || roleValidator.IsSuperAdmin(currentUserId)) //if not an admin or a super admin go to index page
+                    return RedirectToAction("Index", "Home", routeValues: new { });
+
                 //get employee role
-                int? roleId = null;
-                using (var db = new ApplicationDbContext())
-                {
-                    roleId = db.UserRoles.Where(role => String.Equals(role.Name, "Employee")).
-                        FirstOrDefault()?.Id;
-                }
-                if (roleId == null) //something failed, redisplay form
-                    return View(model);
+                int? employeeRoleId = RoleValidator.GetRoleId("Employee");
 
                 //crearte user
                 var user = new ApplicationUser
@@ -179,7 +194,7 @@ namespace MiYo.Controllers
                     FirstName = model.FirstName,
                     LastName = model.LastName,
                     Email = model.Email,
-                    RoleId = (int)roleId,
+                    RoleId = (int)employeeRoleId,
                 };
                 var result = await UserManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
@@ -189,7 +204,7 @@ namespace MiYo.Controllers
                     string callbackUrl = await SendEmailConfirmationTokenAsync(user.Id, "Confirm your account");
 
                     //return RedirectToAction("Index", "Home");
-                    return View("DisplayEmail");
+                    return View("EmployeeRegistered");
                 }
                 AddErrors(result);
             }

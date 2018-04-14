@@ -10,6 +10,9 @@ using MiYo.Models;
 
 namespace MiYo.Controllers
 {
+    /// <summary>
+    /// Provides views that are idential for admin and user
+    /// </summary>
     [Authorize]
     public class ManageController : Controller
     {

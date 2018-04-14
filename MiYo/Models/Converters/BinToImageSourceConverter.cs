@@ -12,7 +12,7 @@ namespace MiYo.Models.Converters
         /// that can be used as src attribute value of img tag.
         /// </summary>
         /// <param name="data">
-        /// byte array image
+        /// byte array image (stored in db)
         /// </param>
         /// <returns>
         /// string that can be used as src attribute value of img tag.
