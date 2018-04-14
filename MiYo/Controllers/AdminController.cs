@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
+using MiYo.Models;
 
 namespace MiYo.Controllers
 {
@@ -66,13 +68,20 @@ namespace MiYo.Controllers
         }
 
         // GET: Admin
-        public ActionResult Index()
+        public async Task<ActionResult> Index()
         {
             // deny employee to see this page
             if (roleValidator.IsEmpoyee(User.Identity.GetUserId()))
                 return RedirectToAction("Index", "User", routeValues: new { });
 
-            return View();
+            var model = new AdminIndexViewModel();
+            var user = await UserManager.FindByIdAsync(User.Identity.GetUserId());
+            //fill model data
+            model.FirstName = user.FirstName;
+            model.LastName = user.LastName;
+            model.Email = user.Email;
+
+            return View(model);
         }
     }
 }

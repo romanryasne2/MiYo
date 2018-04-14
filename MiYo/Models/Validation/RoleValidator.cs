@@ -9,17 +9,35 @@ namespace MiYo.Models.Validation
     {
         public bool IsSuperAdmin(string userId)
         {
-            return false;
+            int? roleId = null;
+            using (var db = new ApplicationDbContext())
+            {
+                roleId = db.Users.Where(u => u.Id == userId).
+                    FirstOrDefault()?.RoleId;
+            }
+            return roleId == GetRoleId("SuperAdmin");
         }
 
         public bool IsAdmin(string userId)
         {
-            return false;
+            int? roleId = null;
+            using (var db = new ApplicationDbContext())
+            {
+                roleId = db.Users.Where(u => u.Id == userId).
+                    FirstOrDefault()?.RoleId;
+            }
+            return roleId == GetRoleId("Admin");
         }
 
         public bool IsEmpoyee(string userId)
         {
-            return true;
+            int? roleId = null;
+            using (var db = new ApplicationDbContext())
+            {
+                roleId = db.Users.Where(u => u.Id == userId).
+                    FirstOrDefault()?.RoleId;
+            }
+            return roleId == GetRoleId("Employee");
         }
 
         public int? GetRoleId(string role)

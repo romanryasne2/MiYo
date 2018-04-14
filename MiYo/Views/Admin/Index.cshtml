@@ -1,0 +1,16 @@
+﻿@{
+    ViewBag.Title = "Admin Home Page";
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <h2>@ViewBag.Title</h2>
+
+        <hr />
+        @Html.ActionLink("Register employee", "Register", "Account",
+              routeValues: new { }, htmlAttributes: new { @class = "btn btn-primary btn-lg" })
+        <hr />
+        @Html.ActionLink("Settings", "Index", "Manage",
+              routeValues: new { }, htmlAttributes: new { @class = "btn btn-primary btn-lg" })
+    </div>
+</div>

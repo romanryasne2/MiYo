@@ -29,7 +29,8 @@ namespace MiYo.Models
             var Roles = new List<Role>
             {
             new Role{Name="Employee"},
-            new Role{Name="Admin"}
+            new Role{Name="Admin"},
+            new Role{Name="SuperAdmin"},
             };
             Roles.ForEach(s => context.UserRoles.Add(s));
             context.SaveChanges();
