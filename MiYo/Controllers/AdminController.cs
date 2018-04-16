@@ -35,12 +35,14 @@ namespace MiYo.Controllers
 
         public AdminController()
         {
+            RoleValidator = new Models.Validation.RoleValidator();
         }
 
         public AdminController(ApplicationUserManager userManager, ApplicationSignInManager signInManager)
         {
             UserManager = userManager;
             SignInManager = signInManager;
+            RoleValidator = new Models.Validation.RoleValidator();
         }
 
         public ApplicationSignInManager SignInManager

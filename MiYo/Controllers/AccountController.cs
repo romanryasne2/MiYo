@@ -5,6 +5,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
+using System.Web.Security;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
@@ -33,12 +34,14 @@ namespace MiYo.Controllers
 
         public AccountController()
         {
+            RoleValidator = new Models.Validation.RoleValidator();
         }
 
         public AccountController(ApplicationUserManager userManager, ApplicationSignInManager signInManager )
         {
             UserManager = userManager;
             SignInManager = signInManager;
+            RoleValidator = new Models.Validation.RoleValidator();
         }
 
         public ApplicationSignInManager SignInManager
@@ -100,7 +103,7 @@ namespace MiYo.Controllers
                     else if (roleValidator.IsAdmin(user.Id))
                         return RedirectToAction("Index", "Admin", routeValues: new { });
                     else
-                        return RedirectToAction("Index", "Employee", routeValues: new { });
+                        return RedirectToAction("Index", "User", routeValues: new { });
                 case SignInStatus.LockedOut:
                     return View("Lockout");
                 case SignInStatus.RequiresVerification:
@@ -197,7 +200,7 @@ namespace MiYo.Controllers
                     RoleId = (int)employeeRoleId,
                 };
                 //generate password
-                string tempPassword = "";
+                string tempPassword = Membership.GeneratePassword(6, 0);
 
                 var result = await UserManager.CreateAsync(user, tempPassword);
                 if (result.Succeeded)
@@ -206,10 +209,9 @@ namespace MiYo.Controllers
 
                     string callbackUrl = await SendEmailConfirmationTokenAsync(user.Id, 
                         "Confirm your account", 
-                        $"After confirmation you can log in with password {tempPassword}.<br/>" +
+                        $"After confirmation you can log in with password: {tempPassword}.<br/>" +
                         "Password can be changed in your account`s settings.");
-
-                    //return RedirectToAction("Index", "Home");
+                    
                     return View("EmployeeRegistered");
                 }
                 AddErrors(result);

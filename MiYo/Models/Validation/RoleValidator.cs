@@ -9,6 +9,8 @@ namespace MiYo.Models.Validation
     {
         public bool IsSuperAdmin(string userId)
         {
+            if (string.IsNullOrEmpty(userId))
+                return false;
             int? roleId = null;
             using (var db = new ApplicationDbContext())
             {
@@ -20,6 +22,8 @@ namespace MiYo.Models.Validation
 
         public bool IsAdmin(string userId)
         {
+            if (string.IsNullOrEmpty(userId))
+                return false;
             int? roleId = null;
             using (var db = new ApplicationDbContext())
             {
@@ -42,6 +46,8 @@ namespace MiYo.Models.Validation
 
         public int? GetRoleId(string role)
         {
+            if (string.IsNullOrEmpty(role))
+                return null;
             int? roleId = null;
             using (var db = new ApplicationDbContext())
             {
