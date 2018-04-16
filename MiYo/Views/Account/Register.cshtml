@@ -2,37 +2,100 @@
 @{
     ViewBag.Title = "Register";
 }
-<h2>@ViewBag.Title.</h2>
-@using (Html.BeginForm("Register", "Account", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
-{
-    @Html.AntiForgeryToken()
-    <h4>Create a new account.</h4>
-    <hr />
-    @Html.ValidationSummary("", new { @class = "text-danger" })
-    <div class="form-group">
-        @Html.LabelFor(m => m.Email, new { @class = "col-md-2 control-label" })
-        <div class="col-md-10">
-            @Html.TextBoxFor(m => m.Email, new { @class = "form-control" })
+<div class="container ">
+    <div class="row">
+        <div class="col-xs-1 col-sm-2 col-md-3 "></div>
+        <div class="col-xs-10 col-sm-8 col-md-6 ">
+            <div class="row">
+                <div class="main-form m-x-auto">
+                    <form class="" method="post" action="/Account/Register">
+                        @Html.AntiForgeryToken()
+                        <div class="form-group">
+                            <label for="name" class="cols-sm-2 control-label">Your Name</label>
+                            <div class="cols-sm-10">
+                                <div class="input-group">
+                                    <span class="input-group-addon">
+                                        <i class="fas fa-user fa-fw" aria-hidden="true"></i>
+                                    </span>
+                                    <input type="text" class="form-control" name="firstName" id="name" placeholder="Enter User First Name" required/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="lastname" class="cols-sm-2 control-label">Last Name</label>
+                            <div class="cols-sm-10">
+                                <div class="input-group">
+                                    <span class="input-group-addon">
+                                        <i class="fas fa-users fa-fw" aria-hidden="true"></i>
+                                    </span>
+                                    <input type="text" class="form-control" name="lastName" id="lastname" placeholder="Enter User Last Name" required/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="email" class="cols-sm-2 control-label">Your Email</label>
+                            <div class="cols-sm-10">
+                                <div class="input-group">
+                                    <span class="input-group-addon">
+                                        <i class="fas fa-envelope fa-fw" aria-hidden="true"></i>
+                                    </span>
+                                    <input type="email" class="form-control" name="email" id="email" placeholder="Enter User Email" required/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="password" class="cols-sm-2 control-label">Password</label>
+                            <div class="cols-sm-10">
+                                <div class="input-group">
+                                    <span class="input-group-addon">
+                                        <i class="fas fa-lock fa-fw" aria-hidden="true"></i>
+                                    </span>
+                                    <input type="password" class="form-control" name="password" id="password" placeholder="Enter User Password" pattern=".{6,}" required/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="confirm" class="cols-sm-2 control-label">Confirm Password</label>
+                            <div class="cols-sm-10">
+                                <div class="input-group">
+                                    <span class="input-group-addon">
+                                        <i class="fas fa-lock fa-fw" aria-hidden="true"></i>
+                                    </span>
+                                    <input type="password" class="form-control" name="confirmPassword" id="confirm" placeholder="Confirm Password" required/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group ">
+                            <button type="submit" id="button" class="btn btn-primary btn-lg btn-block login-button">Register</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
         </div>
+        <div class="col-xs-1 col-sm-2 col-md-3 "></div>
     </div>
-    <div class="form-group">
-        @Html.LabelFor(m => m.FirstName, new { @class = "col-md-2 control-label" })
-        <div class="col-md-10">
-            @Html.TextBoxFor(m => m.FirstName, new { @class = "form-control" })
-        </div>
+</div>
+
+<footer>
+    <div class="container text-xs-center">
+        <a href="#">
+            <i class="fab fa-facebook-square fa-2x"></i>
+        </a>
+        <a href="#">
+            <i class="fab fa-youtube fa-2x"></i>
+        </a>
+        <a href="#">
+            <i class="fab fa-twitter-square fa-2x"></i>
+        </a>
+        <a href="#">
+            <i class="fab fa-instagram fa-2x"></i>
+        </a>
+        <a href="#">
+            <i class="fab fa-skype fa-2x"></i>
+        </a>
     </div>
-    <div class="form-group">
-        @Html.LabelFor(m => m.LastName, new { @class = "col-md-2 control-label" })
-        <div class="col-md-10">
-            @Html.TextBoxFor(m => m.LastName, new { @class = "form-control" })
-        </div>
-    </div>
-    <div class="form-group">
-        <div class="col-md-offset-2 col-md-10">
-            <input type="submit" class="btn btn-default" value="Register" />
-        </div>
-    </div>
-}
+</footer>
+
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
 }

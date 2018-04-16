@@ -1,0 +1,84 @@
+body {
+
+  padding-bottom: 40px;
+  background-color: #eee;
+   background-image: url(../../assets/img/mentor.jpg);
+   background-repeat: no-repeat;
+   background-position: top;
+   background-size: auto;
+
+}
+.form-signin-heading{
+  margin-top: 5%;
+  text-align: center;
+}
+.top{
+  margin-top: 5%;
+}
+.form-signin {
+  max-width: 300px;
+  padding: 15px;
+  margin:  auto;
+}
+.form-signin .form-signin-heading,
+.form-signin .checkbox {
+  margin-bottom: 10px;
+}
+.form-signin .checkbox {
+  font-weight: normal;
+}
+.form-signin .form-control {
+  position: relative;
+  height: auto;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+  padding: 10px;
+  font-size: 16px;
+}
+.form-signin .form-control:focus {
+  z-index: 2;
+}
+.form-signin input[type="email"] {
+  margin-bottom: -1px;
+  border-bottom-right-radius: 0;
+  border-bottom-left-radius: 0;
+}
+.form-signin input[type="password"] {
+  margin-bottom: 10px;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+}
+
+input,
+input::-webkit-input-placeholder {
+ font-size: 11px;
+ padding-top: 3px;
+}
+
+img{
+  max-width: 330px;
+  width: 55%;
+}
+
+h1 {
+  color:#373a3c;}
+
+/*старий футер
+.footer {
+  width: 70%;
+  background: #0275d8;
+  padding: 10px 0;
+}
+.footer a {
+  color: #5C5463;
+  font-size: 20px;
+  padding: 10px;
+  border-right: 1px solid #70726F;
+  transition: all .5s ease;
+}
+.footer a:first-child {
+  border-left: 1px solid #70726F;
+}
+.footer a:hover {
+  color: white;
+}*/

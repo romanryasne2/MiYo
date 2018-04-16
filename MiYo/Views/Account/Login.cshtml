@@ -1,60 +1,55 @@
-﻿@using MiYo.Models
-@model LoginViewModel
+﻿@model MiYo.Models.LoginViewModel
 @{
     ViewBag.Title = "Log in";
 }
 
-<h2>@ViewBag.Title.</h2>
-<div class="row">
-    <div class="col-md-8">
-        <section id="loginForm">
-            @using (Html.BeginForm("Login", "Account", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
-            {
+<div class="container">
+    <div class="row">
+        <div class="col-xs-1 col-sm-2 col-md-3 ">
+        </div>
+        <div class="col-xs-10 col-sm-8 col-md-6 ">
+            <div class="text-xs-center top">
+                <h1 > Mentor in Your Office</h1>
+                <!--<img src="img/Logo.JPG" class="img-thumbnail " alt="Logo">-->
+            </div>
+            <form class="form-signin" action="../Account/Login" method="post">
                 @Html.AntiForgeryToken()
-                <hr />
-                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-                <div class="form-group">
-                    @Html.LabelFor(m => m.Email, new { @class = "col-md-2 control-label" })
-                    <div class="col-md-10">
-                        @Html.TextBoxFor(m => m.Email, new { @class = "form-control" })
-                        @Html.ValidationMessageFor(m => m.Email, "", new { @class = "text-danger" })
-                    </div>
+                <h2 class="form-signin-heading">Sign In</h2>
+                <label for="inputEmail" class="sr-only">Email address</label>
+                <input name="Email" type="email" id="inputEmail" class="form-control" placeholder="Email address" required autofocus>
+                <label for="inputPassword" class="sr-only">Password</label>
+                <input name="Password" type="password" id="inputPassword" class="form-control" placeholder="Password" required>
+                <div class="checkbox">
+                    <label>
+                        <input name="RememberMe" type="checkbox" value="remember-me"> Remember me
+                    </label>
                 </div>
-                <div class="form-group">
-                    @Html.LabelFor(m => m.Password, new { @class = "col-md-2 control-label" })
-                    <div class="col-md-10">
-                        @Html.PasswordFor(m => m.Password, new { @class = "form-control" })
-                        @Html.ValidationMessageFor(m => m.Password, "", new { @class = "text-danger" })
-                    </div>
-                </div>
-                <div class="form-group">
-                    <div class="col-md-offset-2 col-md-10">
-                        <div class="checkbox">
-                            @Html.CheckBoxFor(m => m.RememberMe)
-                            @Html.LabelFor(m => m.RememberMe)
-                        </div>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <div class="col-md-offset-2 col-md-10">
-                        <input type="submit" value="Log in" class="btn btn-default" />
-                    </div>
-                </div>
-                <p>
-                    @Html.ActionLink("Register as a new user", "Register")
-                </p>
-                <p>
-                    @Html.ActionLink("Forgot your password?", "ForgotPassword")
-                </p>
-            }
-        </section>
+                <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
+            </form>
+        </div>
+        <div class="col-xs-1 col-sm-2 col-md-3">
+        </div>
     </div>
-    @*<div class="col-md-4">
-        <section id="socialLoginForm">
-            @Html.Partial("_ExternalLoginsListPartial", new ExternalLoginListViewModel { ReturnUrl = ViewBag.ReturnUrl })
-        </section>
-    </div>*@
 </div>
+<footer>
+    <div class="container text-xs-center">
+        <a href="#">
+            <i class="fab fa-facebook-square fa-2x"></i>
+        </a>
+        <a href="#">
+            <i class="fab fa-youtube fa-2x"></i>
+        </a>
+        <a href="#">
+            <i class="fab fa-twitter-square fa-2x"></i>
+        </a>
+        <a href="#">
+            <i class="fab fa-instagram fa-2x"></i>
+        </a>
+        <a href="#">
+            <i class="fab fa-skype fa-2x"></i>
+        </a>
+    </div>
+</footer>
 
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
