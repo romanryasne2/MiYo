@@ -27,12 +27,12 @@ namespace MiYo
                 "~/Scripts/all.js"));
 
             bundles.Add(new StyleBundle("~/Content/css").Include(
-                      "~/Content/bootstrap.css",
                       "~/Content/site.css"));
 
             bundles.Add(new StyleBundle("~/Content/styles").Include(
                 "~/Content/css/login.css",
-                "~/Content/css/register.css"));
+                "~/Content/css/register.css",
+                "~/Content/css/bootstrap.css"));
         }
     }
 }
