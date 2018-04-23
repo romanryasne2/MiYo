@@ -96,11 +96,11 @@ namespace MiYo.Controllers
             switch (result)
             {
                 case SignInStatus.Success:
-                    if (!user.EmailConfirmed)
+                    /*if (!user.EmailConfirmed) //disable email confirmation for debug
                         return View("DisplayEmail");
-                    else if (!string.IsNullOrEmpty(returnUrl))
+                    else */ if (!string.IsNullOrEmpty(returnUrl))
                         return RedirectToLocal(returnUrl);
-                    else if (roleValidator.IsAdmin(user.Id))
+                    else if (roleValidator.IsAdmin(user.Id) || roleValidator.IsSuperAdmin(user.Id))
                         return RedirectToAction("Index", "Admin", routeValues: new { });
                     else
                         return RedirectToAction("Index", "User", routeValues: new { });

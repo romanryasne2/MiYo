@@ -17,4 +17,12 @@ namespace MiYo.Models
         [Display(Name = "Email")]
         public string Email { get; set; }
     }
+
+    public class AdminRequestViewModel
+    {
+        public List<EmployeeViewModel> Mentors { get; set; }
+        public List<EmployeeViewModel> Mentees { get; set; }
+        public List<EmployeeViewModel> SelectedMentors { get; set; }
+        public List<EmployeeViewModel> SelectedMentees { get; set; }
+    }
 }

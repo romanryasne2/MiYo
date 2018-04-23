@@ -85,5 +85,63 @@ namespace MiYo.Controllers
 
             return View(model);
         }
+
+        // GET: Admin/PairCreated
+        public ActionResult PairCreated()
+        {
+            return View();
+        }
+
+
+        // GET: Admin/Requests
+        public ActionResult Requests(string[] skills, 
+            string locationCountry, string locationCity, string locationStreet, string locationHouse,
+            string language)
+        {
+            //FIX: use employees who sent request only
+            AdminRequestViewModel model = new AdminRequestViewModel();
+            using(var db = new ApplicationDbContext())
+            {
+                //search for location. If part of location is spcecified it must match with db
+                int locationId = db.Locations.Where(loc =>
+                    locationCountry != null ? locationCountry.Equals(loc.Country) : true &&
+                    locationCity != null ? locationCountry.Equals(loc.City) : true &&
+                    locationStreet != null ? locationCountry.Equals(loc.Street) : true &&
+                    locationHouse != null ? locationCountry.Equals(loc.House) : true
+                    ).FirstOrDefault()?.Id ?? -1;
+                int languageId = db.Languages.Where(
+                    l => l.Name.Equals(language)).FirstOrDefault()?.Id ?? -1;
+                
+                //users with selected language
+                var empIdList = db.EmployeeLanguages.
+                    Where(el => el.LanguageId == languageId).
+                    Select(el => el.EmployeeId);
+
+                
+                List<int> skillIdList = skills == null ? new List<int>() :
+                    db.Skills.Where(s => skills.Contains(s.Name)).Select(s => s.Id).ToList();
+                //users with specified language and skill
+                empIdList = empIdList.Intersect(db.EmployeeSkills.
+                    Where(es => skillIdList.Contains(es.SkillId)).
+                    Select(es => es.EmployeeId));
+
+                var employees = empIdList.Select(eId => EmployeeViewModel.FillById(eId)).ToList();
+                model.Mentees = employees.Where(e => 
+                    e.Skills.Where(s => s.State.Equals("WantToLearn")).Count() > 0).ToList();
+                model.Mentors = employees.Where(e =>
+                    e.Skills.Where(s => s.State.Equals("WantToTeach")).Count() > 0).ToList();
+            }
+            return View(model);
+        }
+
+        // POST: Admin/Requests
+        [HttpPost]
+        public async Task<ActionResult> Requests(AdminRequestViewModel request)
+        {
+            //Handling selected mentors and mentees here
+
+            return RedirectToAction("PairCreated");
+        }
+
     }
 }
