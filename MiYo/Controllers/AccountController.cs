@@ -186,8 +186,8 @@ namespace MiYo.Controllers
             if (ModelState.IsValid)
             {
                 var currentUserId = User.Identity.GetUserId();
-                if (roleValidator.IsAdmin(currentUserId) || roleValidator.IsSuperAdmin(currentUserId)) //if not an admin or a super admin go to index page
-                    return RedirectToAction("Index", "Home", routeValues: new { });
+                if (roleValidator.IsEmpoyee(currentUserId)) //if not an admin or a super admin go to index page
+                    return RedirectToAction("Index", "User", routeValues: new { });
 
                 //get employee role
                 int? employeeRoleId = RoleValidator.GetRoleId("Employee");
