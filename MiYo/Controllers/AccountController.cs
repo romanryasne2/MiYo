@@ -73,6 +73,8 @@ namespace MiYo.Controllers
         [AllowAnonymous]
         public ActionResult Login(string returnUrl)
         {
+            if (System.Web.HttpContext.Current.User.Identity.IsAuthenticated)
+                return RedirectToAction("Index", "Manage", new { });
             ViewBag.ReturnUrl = returnUrl;
             return View();
         }
@@ -211,7 +213,7 @@ namespace MiYo.Controllers
                         "Confirm your account", 
                         $"After confirmation you can log in with password: {tempPassword}.<br/>" +
                         "Password can be changed in your account`s settings.");
-                    
+                    ViewBag.TempPass = tempPassword;
                     return View("EmployeeRegistered");
                 }
                 AddErrors(result);

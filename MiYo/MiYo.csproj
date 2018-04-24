@@ -198,6 +198,7 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\AccountViewModels.cs" />
+    <Compile Include="Models\EmployeeRequestFilter.cs" />
     <Compile Include="Models\EmployeeViewModel.cs" />
     <Compile Include="Models\UserViewModels.cs" />
     <Compile Include="Models\Converters\BinToImageSourceConverter.cs" />

@@ -74,7 +74,7 @@ namespace MiYo.Controllers
         {
             // deny employee to see this page
             if (roleValidator.IsEmpoyee(User.Identity.GetUserId()))
-                return RedirectToAction("Index", "User", routeValues: new { });
+                return RedirectToAction("Index", "Admin", routeValues: new { });
 
             var model = new AdminIndexViewModel();
             var user = await UserManager.FindByIdAsync(User.Identity.GetUserId());
@@ -98,38 +98,22 @@ namespace MiYo.Controllers
             string locationCountry, string locationCity, string locationStreet, string locationHouse,
             string language)
         {
+            // deny employee to see this page
+            if (roleValidator.IsEmpoyee(User.Identity.GetUserId()))
+                return RedirectToAction("Index", "User", routeValues: new { });
+
             //FIX: use employees who sent request only
             AdminRequestViewModel model = new AdminRequestViewModel();
-            using(var db = new ApplicationDbContext())
-            {
-                //search for location. If part of location is spcecified it must match with db
-                int locationId = db.Locations.Where(loc =>
-                    locationCountry != null ? locationCountry.Equals(loc.Country) : true &&
-                    locationCity != null ? locationCountry.Equals(loc.City) : true &&
-                    locationStreet != null ? locationCountry.Equals(loc.Street) : true &&
-                    locationHouse != null ? locationCountry.Equals(loc.House) : true
-                    ).FirstOrDefault()?.Id ?? -1;
-                int languageId = db.Languages.Where(
-                    l => l.Name.Equals(language)).FirstOrDefault()?.Id ?? -1;
-                
-                //users with selected language
-                var empIdList = db.EmployeeLanguages.
-                    Where(el => el.LanguageId == languageId).
-                    Select(el => el.EmployeeId);
-
-                
-                List<int> skillIdList = skills == null ? new List<int>() :
-                    db.Skills.Where(s => skills.Contains(s.Name)).Select(s => s.Id).ToList();
-                //users with specified language and skill
-                empIdList = empIdList.Intersect(db.EmployeeSkills.
-                    Where(es => skillIdList.Contains(es.SkillId)).
-                    Select(es => es.EmployeeId));
-
+            var empIdList = new EmployeeRequestFilter().FilterEmployee(skills, 
+                locationCountry, locationCity, locationStreet, locationHouse, language
+                );
+            using (var db = new ApplicationDbContext())
+            {                
                 var employees = empIdList.Select(eId => EmployeeViewModel.FillById(eId)).ToList();
                 model.Mentees = employees.Where(e => 
-                    e.Skills.Where(s => s.State.Equals("WantToLearn")).Count() > 0).ToList();
+                    e.Skills.Where(s => s.State.Equals("Want to learn")).Count() > 0).ToList();
                 model.Mentors = employees.Where(e =>
-                    e.Skills.Where(s => s.State.Equals("WantToTeach")).Count() > 0).ToList();
+                    e.Skills.Where(s => s.State.Equals("Want to teach")).Count() > 0).ToList();
             }
             return View(model);
         }
