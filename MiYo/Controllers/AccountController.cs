@@ -74,7 +74,7 @@ namespace MiYo.Controllers
         public ActionResult Login(string returnUrl)
         {
             if (System.Web.HttpContext.Current.User.Identity.IsAuthenticated)
-                return RedirectToAction("Index", "Manage", new { });
+                return RedirectToAction("Index", "Admin", new { });
             ViewBag.ReturnUrl = returnUrl;
             return View();
         }
@@ -471,7 +471,7 @@ namespace MiYo.Controllers
         public ActionResult LogOff()
         {
             AuthenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("Login", "Account");
         }
 
         //

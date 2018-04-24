@@ -74,7 +74,7 @@ namespace MiYo.Controllers
         {
             // deny employee to see this page
             if (roleValidator.IsEmpoyee(User.Identity.GetUserId()))
-                return RedirectToAction("Index", "Admin", routeValues: new { });
+                return RedirectToAction("Index", "User", routeValues: new { });
 
             var model = new AdminIndexViewModel();
             var user = await UserManager.FindByIdAsync(User.Identity.GetUserId());
