@@ -1,0 +1,68 @@
+@using Microsoft.AspNet.Identity
+@using MiYo.Models.Validation
+<div class="container-fluid padding-remove">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <a class="text-gray nav-link" href="#">Mentor in your office</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mr-auto">
+                @{ var validator = new RoleValidator(); }
+                @if (!validator.IsEmpoyee(User.Identity.GetUserId()))
+                {
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Incoming requests <span class="sr-only">(current)</span></a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">User approval</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Statictics</a>
+                    </li>
+                }
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Profile <span class="sr-only">(current)</span></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Mentoring </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Menteeing </a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Dropdown ??
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <a class="dropdown-item" href="#">Action</a>
+                        <a class="dropdown-item" href="#">Another action</a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="#">Something else here</a>
+                    </div>
+                </li>
+            </ul>
+            <form class="form-inline my-2 my-lg-0">
+                <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+            </form>
+            @using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new
+            {
+                id = "logoutForm", @class = "navbar-right"
+            }))
+            {
+                @Html.AntiForgeryToken()
+
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        @*@Html.ActionLink("Hello " + User.Identity.GetUserName() + "!", "Index", "Manage", routeValues: null, htmlAttributes: new { title = "Manage" })*@
+                    </li>
+                    <li>
+                        <button class="btn btn-outline-light my-2 my-sm-0" type="submit">Log out</button>
+                    </li>
+                </ul>
+            }
+            @**@
+        </div>
+    </nav>
+</div>

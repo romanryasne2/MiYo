@@ -63,3 +63,7 @@ span.input-group-addon i {
 footer{
 	margin-top: 2%;
 }
+
+.mx-auto {
+    width: 100%;
+}

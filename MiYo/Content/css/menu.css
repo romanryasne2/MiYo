@@ -1,0 +1,21 @@
+.text-gray
+{
+color:#373a3c;
+font-size:22px;
+}
+
+.text-gray:hover
+{
+color:white;
+font-size:22px;
+}
+
+.text-white
+{
+color:white;
+}
+.padding-remove
+{
+padding-left:0px !important;
+padding-right:0px !important;
+}
