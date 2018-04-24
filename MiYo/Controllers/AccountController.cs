@@ -73,6 +73,8 @@ namespace MiYo.Controllers
         [AllowAnonymous]
         public ActionResult Login(string returnUrl)
         {
+            if (System.Web.HttpContext.Current.User.Identity.IsAuthenticated)
+                return RedirectToAction("Index", "Manage", new { });
             ViewBag.ReturnUrl = returnUrl;
             return View();
         }
@@ -96,11 +98,11 @@ namespace MiYo.Controllers
             switch (result)
             {
                 case SignInStatus.Success:
-                    if (!user.EmailConfirmed)
+                    /*if (!user.EmailConfirmed) //disable email confirmation for debug
                         return View("DisplayEmail");
-                    else if (!string.IsNullOrEmpty(returnUrl))
+                    else */ if (!string.IsNullOrEmpty(returnUrl))
                         return RedirectToLocal(returnUrl);
-                    else if (roleValidator.IsAdmin(user.Id))
+                    else if (roleValidator.IsAdmin(user.Id) || roleValidator.IsSuperAdmin(user.Id))
                         return RedirectToAction("Index", "Admin", routeValues: new { });
                     else
                         return RedirectToAction("Index", "User", routeValues: new { });
@@ -184,8 +186,8 @@ namespace MiYo.Controllers
             if (ModelState.IsValid)
             {
                 var currentUserId = User.Identity.GetUserId();
-                if (roleValidator.IsAdmin(currentUserId) || roleValidator.IsSuperAdmin(currentUserId)) //if not an admin or a super admin go to index page
-                    return RedirectToAction("Index", "Home", routeValues: new { });
+                if (roleValidator.IsEmpoyee(currentUserId)) //if not an admin or a super admin go to index page
+                    return RedirectToAction("Index", "User", routeValues: new { });
 
                 //get employee role
                 int? employeeRoleId = RoleValidator.GetRoleId("Employee");
@@ -211,7 +213,7 @@ namespace MiYo.Controllers
                         "Confirm your account", 
                         $"After confirmation you can log in with password: {tempPassword}.<br/>" +
                         "Password can be changed in your account`s settings.");
-                    
+                    ViewBag.TempPass = tempPassword;
                     return View("EmployeeRegistered");
                 }
                 AddErrors(result);

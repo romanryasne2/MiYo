@@ -74,7 +74,7 @@ namespace MiYo.Controllers
         {
             // deny employee to see this page
             if (roleValidator.IsEmpoyee(User.Identity.GetUserId()))
-                return RedirectToAction("Index", "User", routeValues: new { });
+                return RedirectToAction("Index", "Admin", routeValues: new { });
 
             var model = new AdminIndexViewModel();
             var user = await UserManager.FindByIdAsync(User.Identity.GetUserId());
@@ -85,5 +85,47 @@ namespace MiYo.Controllers
 
             return View(model);
         }
+
+        // GET: Admin/PairCreated
+        public ActionResult PairCreated()
+        {
+            return View();
+        }
+
+
+        // GET: Admin/Requests
+        public ActionResult Requests(string[] skills, 
+            string locationCountry, string locationCity, string locationStreet, string locationHouse,
+            string language)
+        {
+            // deny employee to see this page
+            if (roleValidator.IsEmpoyee(User.Identity.GetUserId()))
+                return RedirectToAction("Index", "User", routeValues: new { });
+
+            //FIX: use employees who sent request only
+            AdminRequestViewModel model = new AdminRequestViewModel();
+            var empIdList = new EmployeeRequestFilter().FilterEmployee(skills, 
+                locationCountry, locationCity, locationStreet, locationHouse, language
+                );
+            using (var db = new ApplicationDbContext())
+            {                
+                var employees = empIdList.Select(eId => EmployeeViewModel.FillById(eId)).ToList();
+                model.Mentees = employees.Where(e => 
+                    e.Skills.Where(s => s.State.Equals("Want to learn")).Count() > 0).ToList();
+                model.Mentors = employees.Where(e =>
+                    e.Skills.Where(s => s.State.Equals("Want to teach")).Count() > 0).ToList();
+            }
+            return View(model);
+        }
+
+        // POST: Admin/Requests
+        [HttpPost]
+        public async Task<ActionResult> Requests(AdminRequestViewModel request)
+        {
+            //Handling selected mentors and mentees here
+
+            return RedirectToAction("PairCreated");
+        }
+
     }
 }

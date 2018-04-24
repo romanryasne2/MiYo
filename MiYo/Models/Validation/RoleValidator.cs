@@ -17,7 +17,7 @@ namespace MiYo.Models.Validation
                 roleId = db.Users.Where(u => u.Id == userId).
                     FirstOrDefault()?.RoleId;
             }
-            return roleId == GetRoleId("SuperAdmin");
+            return roleId == 3;
         }
 
         public bool IsAdmin(string userId)
@@ -27,10 +27,10 @@ namespace MiYo.Models.Validation
             int? roleId = null;
             using (var db = new ApplicationDbContext())
             {
-                roleId = db.Users.Where(u => u.Id == userId).
+                roleId = db.Users.Where(u => u.Id.Equals(userId)).
                     FirstOrDefault()?.RoleId;
             }
-            return roleId == GetRoleId("Admin");
+            return roleId == 2;
         }
 
         public bool IsEmpoyee(string userId)
@@ -41,7 +41,7 @@ namespace MiYo.Models.Validation
                 roleId = db.Users.Where(u => u.Id == userId).
                     FirstOrDefault()?.RoleId;
             }
-            return roleId == GetRoleId("Employee");
+            return roleId == 1;
         }
 
         public int? GetRoleId(string role)
