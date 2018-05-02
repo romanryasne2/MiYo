@@ -14,10 +14,19 @@ namespace MiYo.Models
             string locationCountry, string locationCity, string locationStreet, string locationHouse,
             string language)
         {
+            
             using (var db = new ApplicationDbContext())
             {
-                //search for location. If part of location is spcecified it must match with db
-                int locationId = db.Locations.Where(loc =>
+                if (skills == null &&
+                    locationCountry == null &&
+                    locationCity == null &&
+                    locationStreet == null &&
+                    locationHouse == null &&
+                    language == null)
+                    return db.Employees.Select(e => e.Id).ToList();
+
+                    //search for location. If part of location is spcecified it must match with db
+                    int locationId = db.Locations.Where(loc =>
                     locationCountry != null ? locationCountry.Equals(loc.Country) : true &&
                     locationCity != null ? locationCountry.Equals(loc.City) : true &&
                     locationStreet != null ? locationCountry.Equals(loc.Street) : true &&

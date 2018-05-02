@@ -13,17 +13,17 @@
                 @if (!validator.IsEmpoyee(User.Identity.GetUserId()))
                 {
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Incoming requests <span class="sr-only">(current)</span></a>
+                        <a class="nav-link" href="/Admin/Requests">Incoming requests <span class="sr-only">(current)</span></a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">User approval</a>
+                        <a class="nav-link" href="/Account/Register">Register employee</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="#">Statictics</a>
                     </li>
                 }
                 <li class="nav-item">
-                    <a class="nav-link" href="#">Profile <span class="sr-only">(current)</span></a>
+                    <a class="nav-link" href="/Admin/Index">Profile <span class="sr-only">(current)</span></a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="#">Mentoring </a>
@@ -31,7 +31,7 @@
                 <li class="nav-item">
                     <a class="nav-link" href="#">Menteeing </a>
                 </li>
-                <li class="nav-item dropdown">
+                @*<li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         Dropdown ??
                     </a>
@@ -41,7 +41,7 @@
                         <div class="dropdown-divider"></div>
                         <a class="dropdown-item" href="#">Something else here</a>
                     </div>
-                </li>
+                </li>*@
             </ul>
             <form class="form-inline my-2 my-lg-0">
                 <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
